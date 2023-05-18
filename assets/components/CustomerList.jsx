@@ -4,7 +4,7 @@ import React, { useState,useEffect } from'react';
 import { ActivityIndicator, FlatList, Text, View, TouchableOpacity, TextInput } from 'react-native';
 
 import { Button } from 'react-native-paper';
-import {styles} from '../styles/Styles';
+
 
 import axios from 'axios'
 
