@@ -1,12 +1,12 @@
 
 import { Button } from 'react-native-paper';
 import {styles} from '../styles/styles';
-import { ActivityIndicator, FlatList, Text, View, TouchableOpacity, TextInput,StyleSheet } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View, TouchableOpacity,StyleSheet } from 'react-native';
 import axios from 'axios'
 import CustomerList from './assets/components/CustomerList';
 import { useForm, Controller } from "react-hook-form";
 import {MaterialCommunityIcons} from '@expo/vector-icons';
-import {Button} from 'react-native-paper'
+import {Button,TextInput} from 'react-native-paper'
 import { useState } from 'react';
 
 
@@ -16,6 +16,7 @@ import { useState } from 'react';
 export default function CustomerScreen() {
 
     const [alerta,setAlerta]=useForm();
+    const [idSearch,setIdSearch]=useState('');
 
   const { control, handleSubmit, formState: { errors },reset } = useForm({
     defaultValues: {
@@ -55,6 +56,17 @@ export default function CustomerScreen() {
 
   }
 
+  const onSearch= async(idSearch)=>{
+        try {
+            const response = await axios.get(`http://172.38.0.66:3000/api/clientes/${idSearch}`);
+            console.log(response.data);
+            setIdSearch(response.data.id);
+            setAlerta(response.data.nombres+" "+response.data.apellidos);
+        }
+        catch (error) {
+                    console.log(error)
+                }
+  }
 
   return (
     <View style={styles.container}>
@@ -62,6 +74,12 @@ export default function CustomerScreen() {
 
      <Text style={{color:'green',fontSize:20,}}>{alerta}</Text>
      
+     <TextInput
+     label="Id del Cliente a Buscar"
+     mode='outlined'
+     style={{}}
+     onChangeText={(idSearch) => setIdSearch(idSearch)}
+     />
       <Controller
         control={control}
         rules={{
@@ -111,7 +129,7 @@ export default function CustomerScreen() {
 
       <View style={{flexDirection:'row',marginTop:20}}>
 
-        <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSubmit)} > Aqui esta el botón </Button>
+        <Button  icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={()=>{onSearch(idSearch)}} > Buscar </Button>
 
 
         <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSave)} > Agregar  </Button>
