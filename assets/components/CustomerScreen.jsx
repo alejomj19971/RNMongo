@@ -18,7 +18,7 @@ export default function CustomerScreen() {
     const [alerta,setAlerta]=useForm();
     const [idSearch,setIdSearch]=useState('');
 
-  const { control, handleSubmit, formState: { errors },reset } = useForm({
+  const { control, handleSubmit, formState: { errors },reset,setValue } = useForm({
     defaultValues: {
       firstName: '',
       lastName: ''
@@ -62,7 +62,11 @@ export default function CustomerScreen() {
             console.log(response.data);
             setIdSearch(response.data.id);
             setAlerta(response.data.nombres+" "+response.data.apellidos);
+            setValue('firstName', response.data.nombres),
+            setValue('firstName', response.data.apellidos);
+
         }
+      
         catch (error) {
                     console.log(error)
                 }
