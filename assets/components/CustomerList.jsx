@@ -1,12 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import React, { useState,useEffect } from'react';
+
 import { ActivityIndicator, FlatList, Text, View, TouchableOpacity, TextInput } from 'react-native';
 
 import { Button } from 'react-native-paper';
 
 
 import axios from 'axios'
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+})
+
+
 
 export default function CustomerList() {
   //Variables de Estado

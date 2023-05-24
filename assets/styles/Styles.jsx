@@ -12,10 +12,6 @@ const Styles =()=>{
     <View></View>
   
   )
-}
 
-export {
-    styles
-}
-
-export default Styles;
+  }
+export default Styles

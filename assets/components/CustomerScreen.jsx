@@ -1,9 +1,7 @@
 
-import { Button } from 'react-native-paper';
-import {styles} from '../styles/styles';
 import { ActivityIndicator, FlatList, Text, View, TouchableOpacity,StyleSheet } from 'react-native';
 import axios from 'axios'
-import CustomerList from './assets/components/CustomerList';
+import CustomerList from './CustomerList';
 import { useForm, Controller } from "react-hook-form";
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {Button,TextInput} from 'react-native-paper'
@@ -11,11 +9,22 @@ import { useState } from 'react';
 
 
 
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+})
 
 export default function CustomerScreen() {
 
-    const [alerta,setAlerta]=useForm();
+    
+
+    const [alerta,setAlerta]=useState("");
+    const [messages,setMessage]=useState("");
+    const [isError,setError]=useState("");
     const [idSearch,setIdSearch]=useState('');
 
   const { control, handleSubmit, formState: { errors },reset,setValue } = useForm({
@@ -59,12 +68,15 @@ export default function CustomerScreen() {
   const onSearch= async(idSearch)=>{
         try {
             const response = await axios.get(`http://172.38.0.66:3000/api/clientes/${idSearch}`);
-            console.log(response.data);
+            
+            if(!response.data.error){
             setIdSearch(response.data.id);
             setAlerta(response.data.nombres+" "+response.data.apellidos);
             setValue('firstName', response.data.nombres),
             setValue('firstName', response.data.apellidos);
-
+            setError(false);
+            setMessage("");
+          }
         }
       
         catch (error) {
@@ -121,13 +133,15 @@ export default function CustomerScreen() {
         )}
         name="lastName"
       />
+
       {errors.lastName && <Text>Los Apellidos son obligatorios</Text>}
+      <Text style={{color:'white',backgroundColor:isError ?'red':'green'}}></Text>
       <View style={{flexDirection:'row',marginTop:20}}>
 
-      <Button icon='plus' mode='contained' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSubmit)} > Aqui esta el botón </Button>
+      <Button icon='plus' mode='contained' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSave)} > Aqui esta el botón </Button>
 
       
-      <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSubmit)} > Aqui esta el botón </Button>
+      <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSave)} > Aqui esta el botón </Button>
       </View>
 
 
