@@ -40,7 +40,6 @@ export default function CustomerScreen() {
     let nombre=firstName
     try {
       const response = await axios.post(`http://172.38.0.66:3000/api/clientes`, {
-       
             nombre,
             apellidos
            
@@ -58,19 +57,38 @@ export default function CustomerScreen() {
     finally{
       //setLoading(false);
     }
-  
-
-
-
-
   }
 
-  const onSearch= async(idSearch)=>{
+
+  const onUpdate = async(data) => {
+    console.log(idSearch)
+    try {
+      const response = await axios.put(`http://127.0.0.1:3000/api/clientes/${idSearch}`, {
+            nombre:data.firstName,
+            apellidos:data.lastName
+           
+      });
+      setAlerta("Cliente Actualizado correctamente ...");
+      setTimeout(() => {
+        setAlerta('');
+        reset();
+      }, 2000);
+    
+      
+    } catch (error) {
+      console.log(error)
+    }
+    finally{
+      //setLoading(false);
+    }
+  }
+
+  const onSearch= async()=>{
         try {
             const response = await axios.get(`http://172.38.0.66:3000/api/clientes/${idSearch}`);
             
             if(!response.data.error){
-            setIdSearch(response.data.id);
+            //setIdSearch(response.data.id);
             setAlerta(response.data.nombre+" "+response.data.apellidos);
             setValue('firstName', response.data.nombre),
             setValue('lastName', response.data.apellidos);
@@ -88,13 +106,30 @@ export default function CustomerScreen() {
 
             }, 3000);
             reset();
-            setIdSearch('');
+            //setIdSearch('');
           }
         }
       
         catch (error) {
                     console.log(error)
                 }
+  }
+
+
+  const onDelete = async(data) => {
+
+    if(confirm(`Esta seguro de eliminar el cliente : ${data.firstName} ${data.lastName}`)){
+        const response = await axios.delete(`http://172.38.0.66:3000/api/clientes/${idSearch}`);
+        setError(false);
+        setMessage("Cliente Eliminado correctamente...");
+
+                setTimeout(() => {
+                  setMessage('');
+                  reset();
+                
+        }, 3000);
+    }
+
   }
 
   return (
@@ -108,6 +143,7 @@ export default function CustomerScreen() {
      mode='outlined'
      style={{}}
      onChangeText={(idSearch) => setIdSearch(idSearch)}
+     value={idSearch}
      />
       <Controller
         control={control}
@@ -151,10 +187,10 @@ export default function CustomerScreen() {
       <Text style={{color:'white',backgroundColor:isError ?'red':'green'}}>{messages}</Text>
       <View style={{flexDirection:'row',marginTop:20}}>
 
-      <Button icon='plus' mode='contained' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSave)} > Aqui esta el botón </Button>
+      <Button icon='plus' mode='contained' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onDelete)} > Eliminar </Button>
 
       
-      <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSave)} > Aqui esta el botón </Button>
+      <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onUpdate)} > Actualizar Registro </Button>
       </View>
 
 
@@ -163,7 +199,7 @@ export default function CustomerScreen() {
         <Button  icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={()=>{onSearch(idSearch)}} > Buscar </Button>
 
 
-        <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSave)} > Agregar  </Button>
+        <Button icon='account-search' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onDelete)} > Agregar  </Button>
     </View>
 
 
@@ -172,5 +208,4 @@ export default function CustomerScreen() {
   
   );
 }
-
 
