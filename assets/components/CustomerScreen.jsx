@@ -24,7 +24,7 @@ export default function CustomerScreen() {
 
     const [alerta,setAlerta]=useState("");
     const [messages,setMessage]=useState("");
-    const [isError,setError]=useState("");
+    const [isError,setError]=useState(false);
     const [idSearch,setIdSearch]=useState('');
 
   const { control, handleSubmit, formState: { errors },reset,setValue } = useForm({
@@ -35,13 +35,13 @@ export default function CustomerScreen() {
   });
   const onSave = async(data) => {
     //setLoading(true);
-    const {firstname,lastname}=data
-    let apellidos=lastname
-    let nombres=firstname
+    const {firstName,lastName}=data
+    let apellidos=lastName
+    let nombre=firstName
     try {
       const response = await axios.post(`http://172.38.0.66:3000/api/clientes`, {
        
-            nombres,
+            nombre,
             apellidos
            
       });
@@ -71,11 +71,24 @@ export default function CustomerScreen() {
             
             if(!response.data.error){
             setIdSearch(response.data.id);
-            setAlerta(response.data.nombres+" "+response.data.apellidos);
-            setValue('firstName', response.data.nombres),
-            setValue('firstName', response.data.apellidos);
+            setAlerta(response.data.nombre+" "+response.data.apellidos);
+            setValue('firstName', response.data.nombre),
+            setValue('lastName', response.data.apellidos);
             setError(false);
             setMessage("");
+          }
+
+          else{
+            setError(true);
+            setMessage("El id del client no existe intentelo con otro");
+
+            setTimeout(() => {
+
+              setMessage('');
+
+            }, 3000);
+            reset();
+            setIdSearch('');
           }
         }
       
@@ -135,7 +148,7 @@ export default function CustomerScreen() {
       />
 
       {errors.lastName && <Text>Los Apellidos son obligatorios</Text>}
-      <Text style={{color:'white',backgroundColor:isError ?'red':'green'}}></Text>
+      <Text style={{color:'white',backgroundColor:isError ?'red':'green'}}>{messages}</Text>
       <View style={{flexDirection:'row',marginTop:20}}>
 
       <Button icon='plus' mode='contained' buttonColor='purple' textColor='white' title="Submit" onPress={handleSubmit(onSave)} > Aqui esta el botón </Button>
